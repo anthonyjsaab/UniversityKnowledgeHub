@@ -31,8 +31,8 @@ def validate_login(request):
     j = json.loads(response.content)
     email = j.get('mail')
     obj, created = MyUser.objects.get_or_create(email=email, defaults={'email': email, 'username': str(uuid.uuid4())})
-    print(obj)
-    print(created)
+    obj.latest_sid = session_state
+    obj.save()
     login(request, obj)
     return render(request, 'authentication/empty.html')
 
@@ -45,7 +45,11 @@ def test(request):
 
 
 def logout_(request):
-    logout(request)
+    if 'sid' not in request.GET.keys() or not request.GET.get('sid'):
+        return HttpResponse('Bruh')
+    maybe = MyUser.objects.filter(latest_sid=request.GET.get('sid'))
+    if maybe:
+        maybe[0].session_set.all().delete()
     return HttpResponse("OK")
 
 
