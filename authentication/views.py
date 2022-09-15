@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
@@ -44,7 +44,7 @@ def test(request):
         return HttpResponse("Nah")
 
 
-def logout(request):
+def logout_(request):
     logout(request)
     return HttpResponse("OK")
 

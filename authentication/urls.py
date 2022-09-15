@@ -11,5 +11,5 @@ urlpatterns = [
         '&response_type=code&response_mode=query&scope=openid%20profile%20User.Read%20offline_access')),
     path('i_got_code/', views.validate_login),
     path('test/', views.test),
-    path('logout/', views.logout),
+    path('logout/', views.logout_),
 ]
