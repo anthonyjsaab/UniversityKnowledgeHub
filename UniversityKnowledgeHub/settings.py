@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'authentication.MyUser'
+
+UNIVERSITY_MX_FQDN = 'mail.aub.edu'
+AD_CLIENT_ID = 'ddde2cf6-fb0a-400b-8a10-fd6cdcb3b8a1'
+AD_CLIENT_SECRET = 'CNd8Q~dtmPzPCbTC4uYNuj9fRvMdtEX3.bzaRaww'
