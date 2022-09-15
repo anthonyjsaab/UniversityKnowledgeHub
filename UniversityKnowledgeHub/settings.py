@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+import django_heroku
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -128,3 +130,6 @@ AUTH_USER_MODEL = 'authentication.MyUser'
 UNIVERSITY_MX_FQDN = 'mail.aub.edu'
 AD_CLIENT_ID = 'ddde2cf6-fb0a-400b-8a10-fd6cdcb3b8a1'
 AD_CLIENT_SECRET = 'CNd8Q~dtmPzPCbTC4uYNuj9fRvMdtEX3.bzaRaww'
+
+
+django_heroku.settings(locals())
