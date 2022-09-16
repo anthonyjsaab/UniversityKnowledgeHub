@@ -1,6 +1,7 @@
 import json
 import uuid
 from django.contrib.auth import login, logout
+from django.contrib.sessions.models import Session
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
@@ -31,7 +32,8 @@ def validate_login(request):
     email = j.get('mail')
     obj, created = MyUser.objects.get_or_create(email=email, defaults={'email': email, 'username': str(uuid.uuid4())})
     login(request, obj)
-    ssout = SSOut.objects.create(microsoft_sessionid=session_state, django_session=request.session, user=request.user)
+    session = Session.objects.get(session_key=request.session.session_key)
+    ssout = SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
     return render(request, 'authentication/empty.html')
 
 
