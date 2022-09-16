@@ -23,11 +23,11 @@ def validate_login(request):
     }
     response = requests.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data)
     if str(response.status_code) != '200':
-        return HttpResponse("Something went wrong")
+        return HttpResponse("Something went wrong 1")
     j = json.loads(response.content)
     response = requests.get('https://graph.microsoft.com/v1.0/me', headers={'Authorization': f'Bearer {j.get("access_token")}'})
     if str(response.status_code) != '200':
-        return HttpResponse("Something went wrong")
+        return HttpResponse("Something went wrong 2")
     j = json.loads(response.content)
     email = j.get('mail')
     obj, created = MyUser.objects.get_or_create(email=email, defaults={'email': email, 'username': str(uuid.uuid4())})
