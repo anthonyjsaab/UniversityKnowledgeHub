@@ -1,12 +1,11 @@
 import json
 import uuid
-
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
 from django.shortcuts import render
 import requests
 from UniversityKnowledgeHub.settings import AD_CLIENT_ID, AD_CLIENT_SECRET
-from authentication.models import MyUser
+from authentication.models import MyUser, SSOut
 
 
 # Create your views here.
@@ -31,9 +30,8 @@ def validate_login(request):
     j = json.loads(response.content)
     email = j.get('mail')
     obj, created = MyUser.objects.get_or_create(email=email, defaults={'email': email, 'username': str(uuid.uuid4())})
-    obj.latest_sid = session_state
-    obj.save()
     login(request, obj)
+    ssout = SSOut.objects.create(microsoft_sessionid=session_state, django_session=request.session, user=request.user)
     return render(request, 'authentication/empty.html')
 
 
@@ -44,12 +42,16 @@ def test(request):
         return HttpResponse("Nah")
 
 
-def logout_(request):
+def log_me_out(request):
+    logout(request)
+    return HttpResponse("OKM")
+
+
+def sso_logout(request):
     if 'sid' not in request.GET.keys() or not request.GET.get('sid'):
         return HttpResponse('Bruh')
-    maybe = MyUser.objects.filter(latest_sid=request.GET.get('sid'))
+    maybe = SSOut.objects.get(microsoft_sessionid=request.GET.get('sid'))
     if maybe:
-        maybe[0].session_set.all().delete()
+        maybe.django_session.delete()
     return HttpResponse("OK")
-
 
