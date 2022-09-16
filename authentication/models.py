@@ -16,6 +16,6 @@ class MyUser(AbstractUser):
 
 
 class SSOut(models.Model):
-    microsoft_sessionid = models.CharField(max_length=120, unique=True, null=False)
+    microsoft_sessionid = models.CharField(max_length=120, null=False)
     django_session = models.ForeignKey(to=Session, on_delete=models.CASCADE)
     user = models.ForeignKey(to=MyUser, on_delete=models.CASCADE)
