@@ -9,10 +9,10 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
-
 import django_heroku
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -128,8 +128,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentication.MyUser'
 
 UNIVERSITY_MX_FQDN = 'mail.aub.edu'
-AD_CLIENT_ID = 'ddde2cf6-fb0a-400b-8a10-fd6cdcb3b8a1'
-AD_CLIENT_SECRET = 'CNd8Q~dtmPzPCbTC4uYNuj9fRvMdtEX3.bzaRaww'
-
+AD_CLIENT_ID = os.environ.get("AD_CLIENT_ID")
+AD_CLIENT_SECRET = os.environ.get("AD_CLIENT_SECRET")
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION')
 
 django_heroku.settings(locals())

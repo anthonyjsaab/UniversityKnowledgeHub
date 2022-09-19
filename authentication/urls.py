@@ -11,4 +11,6 @@ urlpatterns = [
     path('test/', views.test),
     path('logout/', views.log_me_out),
     path('sso_logout/', views.sso_logout),
+    path('up/', views.upload_requirements),
+    path('down/', views.download_reqs),
 ]
