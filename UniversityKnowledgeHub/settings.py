@@ -127,7 +127,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'authentication.MyUser'
 
-UNIVERSITY_MX_FQDN = 'mail.aub.edu'
+ALLOWED_USER_FQDNS = ['mail.aub.edu', 'cs50x.anthonyjsaab.com']
+RESTRICT_FQDN = True
 AD_CLIENT_ID = os.environ.get("AD_CLIENT_ID")
 AD_CLIENT_SECRET = os.environ.get("AD_CLIENT_SECRET")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
