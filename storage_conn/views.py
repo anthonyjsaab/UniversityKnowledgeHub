@@ -20,3 +20,9 @@ def s3_generate_down_url(object_name, expiry_seconds):
 def s3_upload_file(path, object_name):
     s3 = boto3.client('s3')
     s3.upload_file(path, settings.AWS_STORAGE_BUCKET_NAME, object_name)
+
+
+def s3_upload_fileobj(obj, object_name):
+    s3 = boto3.client('s3')
+    s3.upload_fileobj(obj, settings.AWS_STORAGE_BUCKET_NAME, object_name)
+
