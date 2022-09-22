@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect
+from django.urls import reverse
 from UniversityKnowledgeHub.settings import AD_CLIENT_ID, AD_CLIENT_SECRET
 from authentication.models import MyUser, SSOut
 
@@ -64,7 +65,7 @@ def validate_login(request):
         # in a custom SSOut object. This object is used later for Single Sign OUT
         session = Session.objects.get(session_key=request.session.session_key)
         SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
-        return render(request, 'authentication/empty.html')
+        return redirect('home')
     except ValidationError:
         # User's info is not compliant, cleanup and abort
         logout(request)
@@ -85,7 +86,7 @@ def log_me_out(request):
     :return:
     """
     logout(request)
-    return HttpResponse("OKM")
+    return redirect('home')
 
 
 def sso_logout(request):
