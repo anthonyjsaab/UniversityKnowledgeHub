@@ -2,13 +2,13 @@ import json
 import uuid
 import requests
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from UniversityKnowledgeHub.settings import AD_CLIENT_ID, AD_CLIENT_SECRET
 from authentication.models import MyUser, SSOut
-from storage_conn.views import s3_generate_down_url, s3_upload_file
 
 
 def validate_login(request):
@@ -72,16 +72,6 @@ def sso_logout(request):
         for ele in maybe:
             ele.django_session.delete()
     return HttpResponse("OK")
-
-
-def upload_requirements(request):
-    s3_upload_file("requirements.txt", "1.txt")
-    return HttpResponse("O")
-
-
-def download_reqs(request):
-    url = s3_generate_down_url("reqs.txt", 15)
-    return HttpResponseRedirect(url)
 
 
 def sso_login(request):
