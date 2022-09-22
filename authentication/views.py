@@ -90,11 +90,14 @@ def log_me_out(request):
 
 def sso_logout(request):
     """
-    Single Sign OUT designed to be invoked by Microsoft when user signs out from Microsoft's site
+    Single Sign OUT designed to be invoked by Microsoft when user signs out from Microsoft's site.
+    This is necessary. I cannot simply logout(request) because the request ordered by Microsoft would be received
+    as coming from AnonymousUser.
+    (Refused to display 'https://e93f9cubheicgvfwugvobwqcf.herokuapp.com/' in a frame because it set 'X-Frame-Options'
+    to 'deny'.)
     :param request:
     :return:
     """
-    print(request.user)
     if 'sid' not in request.GET.keys() or not request.GET.get('sid'):
         return HttpResponse("Ew")
     maybe = SSOut.objects.filter(microsoft_sessionid=request.GET.get('sid'))
