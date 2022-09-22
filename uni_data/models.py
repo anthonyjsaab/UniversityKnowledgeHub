@@ -13,8 +13,8 @@ class Course(models.Model):
 
 
 class Previous(models.Model):
-    #course = models.ForeignKey(to=Course, on_delete=models.CASCADE)
-    #professor = models.ManyToManyField(to=Professor)
     s3_object_name = models.CharField(max_length=100)
-    #description = models.CharField(max_length=500)
-    #submitter = models.ForeignKey(to=MyUser, null=True, on_delete=models.DO_NOTHING)
+    description = models.CharField(max_length=500)
+    course = models.ForeignKey(to=Course, null=True, blank=True, on_delete=models.DO_NOTHING)
+    professor = models.ForeignKey(to=Professor, null=True, blank=True, on_delete=models.DO_NOTHING)
+    submitter = models.ForeignKey(to=MyUser, null=True, on_delete=models.DO_NOTHING)
