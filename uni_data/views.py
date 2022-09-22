@@ -2,13 +2,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import CreateView
-
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
 from uni_data.models import Previous
 
 
-# Create your views here.
 class CreatePreviousView(CreateView, SuccessMessageMixin):
     model = Previous
     form_class = CreatePreviousForm
