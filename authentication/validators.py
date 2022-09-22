@@ -7,7 +7,7 @@ class FQDNValidator:
     def __init__(self, email):
         allowed = False
         for fqdn in ALLOWED_USER_FQDNS:
-            if re.search(rf'^\w+@{fqdn}$', email):
+            if re.search(rf'^[\w\.]+@{fqdn}$', email):
                 allowed = True
                 break
         if RESTRICT_FQDN and not allowed:
