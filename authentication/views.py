@@ -46,14 +46,14 @@ def validate_login(request):
         return HttpResponse("Something went wrong 2")
     j = json.loads(response.content)
     # Below, we get the true, valid email of the user trying to login from a trusted source: Microsoft
-    email = j.get('userPrincipalName')
+    first_name, last_name, email = j.get('givenName'), j.get('surname'), j.get('userPrincipalName')
     # Below is empty set if first-time user logging in, contains 1 MyUser object if returning visitor
     filtered = MyUser.objects.filter(email=email)
     if filtered:
         user = filtered[0]
     else:
         # First time user, creating record in DB
-        user = MyUser(email=email, username=str(uuid.uuid4()))
+        user = MyUser(email=email, username=str(uuid.uuid4()), first_name=first_name, last_name=last_name)
         user.set_unusable_password()
     try:
         # Below raises exception if one of the validators are not happy

@@ -11,12 +11,16 @@ class MyUser(AbstractUser):
         # Helpful when we want to restrict FQDNs
         validators=[FQDNValidator],
         unique=True)
-    username = models.CharField(max_length=100, null=False, blank=False)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
 
 class SSOut(models.Model):
+    """
+    Single Sign OUT designed to be invoked by Microsoft when user signs out from Microsoft's site.
+    This is necessary. I cannot simply logout(request) because the request ordered by Microsoft would be received
+    as coming from AnonymousUser.
+    (Refused to display 'https://e93f9cubheicgvfwugvobwqcf.herokuapp.com/' in a frame because it set 'X-Frame-Options'
+    to 'deny'.)
+    """
     microsoft_sessionid = models.CharField(max_length=120, null=False)
     django_session = models.ForeignKey(to=Session, on_delete=models.CASCADE)
     user = models.ForeignKey(to=MyUser, on_delete=models.CASCADE)
