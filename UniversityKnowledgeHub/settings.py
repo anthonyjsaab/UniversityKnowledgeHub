@@ -26,9 +26,9 @@ SECRET_KEY = 'django-insecure-4ehfh@nmix6zhuj$k4735el3h+vvzjy69w7&5d)xclzv7ws35&
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'uni_data',
+    'storage_conn',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_URL = 'https://cdn.previouses.ml/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -139,4 +141,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
 AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION')
 
-django_heroku.settings(locals())
+# The line below is cursed: it overwrites many vars in this settings.py file
+# I spent a day trying to find out why changing STATIC_URL was not being reflected
+# It turned out this below line was responsible. So I added staticfiles=False to solve
+# the problem
+django_heroku.settings(locals(), staticfiles=False)
