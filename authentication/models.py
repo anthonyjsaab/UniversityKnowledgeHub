@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import AbstractUser
 from django.contrib.sessions.models import Session
 from django.db import models
@@ -11,6 +12,10 @@ class MyUser(AbstractUser):
         # Helpful when we want to restrict FQDNs
         validators=[FQDNValidator],
         unique=True)
+    previouses_count = models.IntegerField(blank=True, null=False, default=0)
+    username = models.CharField(max_length=50, null=False, unique=True, default=str(uuid.uuid4()))
+    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'email'
 
 
 class SSOut(models.Model):

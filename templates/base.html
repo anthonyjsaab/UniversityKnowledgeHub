@@ -3,9 +3,10 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>UniKnowHub</title>
     <!-- JavaScript Bundle with Popper -->
     <!-- CSS only -->
+    <link href="{% static 'favicon.png' %}" rel="icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 </head>
@@ -14,36 +15,30 @@
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                    <!--use xlink:href="#bootstrap"></use-->
+                <svg width="40" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <polygon fill="var(--ci-primary-color, currentColor)"
+                             points="368 350.643 256 413.643 144 350.643 144 284.081 112 266.303 112 369.357 256 450.357 400 369.357 400 266.303 368 284.081 368 350.643"
+                             class="ci-primary"/>
+                    <path fill="var(--ci-primary-color, currentColor)"
+                          d="M256,45.977,32,162.125v27.734L256,314.3,448,207.637V296h32V162.125ZM416,188.808l-32,17.777L256,277.7,128,206.585,96,188.808,73.821,176.486,256,82.023l182.179,94.463Z"
+                          class="ci-primary"/>
                 </svg>
             </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Features</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Pricing</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">About</a></li>
             </ul>
-
-            <!--form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..."
-                       aria-label="Search">
-            </form-->
 
             <div class="text-end">
                 {% if request.user.is_authenticated %}
                     <button type="button" class="btn btn-outline-info me-2">{{ user.email }}</button>
                     <button type="button" class="btn btn-primary me-2">Settings</button>
-                    <a href="{% url 'man_logout' %}">
-                        <button type="button" class="btn btn-danger">Logout</button>
-                    </a>
+                    <button type="button" class="btn btn-danger" onclick="location.href='{% url 'man_logout' %}';">Logout</button>
                 {% else %}
-                    <div class="btn btn-outline-light">
-                        <a href="{% url 'sso_login' %}">
-                            <img src="{% static 'authentication/img/signin-with-microsoft-dark.svg' %}">
-                        </a>
+                    <div class="btn btn-outline-light" onclick="location.href='{% url 'sso_login' %}';">
+                        <img src="{% static 'img/signin-with-microsoft-dark.svg'  %}">
                     </div>
                 {% endif %}
             </div>
@@ -51,14 +46,8 @@
     </div>
 </header>
 <div class="container pb-3">
-    <div class="d-grid gap-3" style="grid-template-columns: 1fr 1fr;">
-        <div class="bg-light border rounded-3">
-            <br><br><br><br><br><br><br><br><br><br>
-        </div>
-        <div class="bg-light border rounded-3">
-            <br><br><br><br><br><br><br><br><br><br>
-        </div>
-    </div>
+    {% block main_content %}
+    {% endblock %}
 </div>
 <div class="container">
     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
@@ -68,7 +57,7 @@
                     <use xlink:href="#bootstrap"></use>
                 </svg>
             </a>
-            <span class="mb-3 mb-md-0 text-muted">© 2022 Anthony J. Saab for CS50x</span>
+            <span class="mb-3 mb-md-0 text-muted">© 2022 Anthony J. Saab - Project for Harvard's CS50x</span>
         </div>
 
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">

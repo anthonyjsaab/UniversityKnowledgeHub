@@ -121,14 +121,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATIC_URL = 'https://cdn.previouses.ml/'
+STATIC_URL = 'https://cdn.previouses.ml/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AUTH_USER_MODEL = 'authentication.MyUser'
 
 ALLOWED_USER_FQDNS = ['mail.aub.edu', 'cs50x.anthonyjsaab.com']
@@ -140,6 +141,11 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
 AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION')
+AWS_DEFAULT_ACL = None
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+PRIVATE_MEDIA_LOCATION = 'private'
+PRIVATE_FILE_STORAGE = 'hello_django.storage_backends.PrivateMediaStorage'
 
 # The line below is cursed: it overwrites many vars in this settings.py file
 # I spent a day trying to find out why changing STATIC_URL was not being reflected

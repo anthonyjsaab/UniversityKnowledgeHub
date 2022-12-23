@@ -1,15 +1,17 @@
-from django.forms import ModelForm, forms
-from storage_conn.views import s3_upload_fileobj
+from django.forms import ModelForm
+import django.forms as forms
 from uni_data.models import Previous
 
 
 class CreatePreviousForm(ModelForm):
-    file = forms.FileField()
-
     class Meta:
         model = Previous
-        exclude = ['s3_object_name', 'submitter']
+        fields = ['course', 'type', 'file']
+        widgets = {
+            'course': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'type': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),
+            'file': forms.FileInput(attrs={'class': 'form-control'}),
+        }
 
     def save(self, commit=True):
-        s3_upload_fileobj(self.cleaned_data["file"], self.instance.s3_object_name)
         super(CreatePreviousForm, self).save(commit=commit)
