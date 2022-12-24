@@ -1,6 +1,8 @@
 import json
 import uuid
 import requests
+import base64
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.sessions.models import Session
@@ -39,20 +41,35 @@ def validate_login(request):
         return HttpResponse("Something went wrong 1")
     # Tokens are below
     j = json.loads(response.content)
-    # Below is not is the image, we are using Microsoft Graph to fetch data of user using access tokens of Step 7
-    response = requests.get('https://graph.microsoft.com/v1.0/me',
-                            headers={'Authorization': f'Bearer {j.get("access_token")}'})
-    if str(response.status_code) != '200':
-        return HttpResponse("Something went wrong 2")
-    j = json.loads(response.content)
-    # Below, we get the true, valid email of the user trying to login from a trusted source: Microsoft
-    first_name, last_name, email = j.get('givenName'), j.get('surname'), j.get('userPrincipalName')
-    # Below is empty set if first-time user logging in, contains 1 MyUser object if returning visitor
-    filtered = MyUser.objects.filter(email=email)
-    if filtered:
-        user = filtered[0]
+    # This id_token contains information about the Microsoft user trying to login to our website, notably their email.
+    # Since this token comes from Microsoft directly, we can trust it
+    # Below, we are decoding the token from base654 to UTF-8
+    id_token = j["id_token"]
+    relevant_JWT_part = id_token.split(".")[1]
+    decoded_token_bin = base64.b64decode(
+        bytes(relevant_JWT_part + "=" * (len(relevant_JWT_part) % 4), encoding="UTF-8"))
+    decoded_token = json.loads(decoded_token_bin)
+    email = decoded_token["email"]
+    # Now that we have decoded the id_token and extracted the email, we see if the user is a new or returning visitor
+    # We try to see if the DB has any record of this email
+    potentialUser = MyUser.objects.filter(email=email)
+    if potentialUser:
+        # The user is a returning visitor, we have enough evidence that they do have control over the email
+        # We will issue them the tokens, no need to use any other Microsoft endpoint
+        user = potentialUser[0]
     else:
-        # First time user, creating record in DB
+        # The user is a new visitor, we need to use the userinfo endpoint to get their given_name and family_name
+        # This step is not is the image describing the interaction with Microsoft.
+        # We are using Microsoft Graph to fetch data of user using access tokens of Step 7
+        # The endpoint used is of type OpenID Connect, got it from:
+        # https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
+        response = requests.get('https://graph.microsoft.com/oidc/userinfo',
+                                headers={'Authorization': f'Bearer {j.get("access_token")}'})
+        if str(response.status_code) != '200':
+            return Response("Something went wrong", status=500)
+        j = json.loads(response.content)
+        # Below, we get the true, valid email of the user trying to login from a trusted source: Microsoft
+        first_name, last_name, email = j.get('given_name'), j.get('family_name'), j.get('email')
         user = MyUser(email=email, username=str(uuid.uuid4()), first_name=first_name, last_name=last_name)
         user.set_unusable_password()
     try:
@@ -69,7 +86,7 @@ def validate_login(request):
     except ValidationError:
         # User's info is not compliant, cleanup and abort
         logout(request)
-        return HttpResponse("Nope")
+        return Response("Failed", status=400)
 
 
 def test(request):
