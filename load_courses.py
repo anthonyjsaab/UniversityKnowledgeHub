@@ -17,4 +17,4 @@ while True:
     lines.append(line)
 for i in range(1, len(lines)):
     line = lines[i].split(",")
-    Course.objects.create(letter_code=line[0], number=line[1])
+    Course.objects.create(letter_code=line[0], number=line[1], title=line[2])

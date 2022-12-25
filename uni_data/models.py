@@ -26,6 +26,7 @@ class Course(models.Model):
     letter_code = models.CharField(max_length=5, null=False)
     number = models.CharField(max_length=8, null=False)
     previouses_count = models.IntegerField(blank=True, null=False, default=0)
+    title = models.CharField(max_length=255, null=True, blank=False)
 
     def __str__(self):
         return self.letter_code + self.number
