@@ -9,7 +9,7 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from UniversityKnowledgeHub.settings import AD_CLIENT_ID, AD_CLIENT_SECRET
 from authentication.models import MyUser, SSOut
 
