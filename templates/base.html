@@ -14,7 +14,7 @@
 <header class="p-3 text-bg-dark mb-3 border-bottom">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+            <a href="{% url 'home' %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                 <svg width="40" height="32" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                     <polygon fill="var(--ci-primary-color, currentColor)"
                              points="368 350.643 256 413.643 144 350.643 144 284.081 112 266.303 112 369.357 256 450.357 400 369.357 400 266.303 368 284.081 368 350.643"
@@ -26,19 +26,25 @@
             </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
+                <li><a href="{% url 'home' %}" class="nav-link px-2 text-secondary">Home</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">About</a></li>
             </ul>
 
             <div class="text-end">
                 {% if request.user.is_authenticated %}
-                    <button type="button" class="btn btn-outline-info me-2">{{ user.email }}</button>
+                    <button type="button" class="btn btn-outline-info me-2" style="width:300px"
+                            onMouseOver="this.innerHTML='{{ user.credits }} credits left'"
+                            onMouseOut="this.innerHTML='{{ user.email }}'">
+                        {{ user.email }}
+                    </button>
                     <button type="button" class="btn btn-primary me-2">Settings</button>
-                    <button type="button" class="btn btn-danger" onclick="location.href='{% url 'man_logout' %}';">Logout</button>
+                    <button type="button" class="btn btn-danger" onclick="location.href='{% url 'man_logout' %}';">
+                        Logout
+                    </button>
                 {% else %}
                     <div class="btn btn-outline-light" onclick="location.href='{% url 'sso_login' %}';">
-                        <img src="{% static 'img/signin-with-microsoft-dark.svg'  %}">
+                        <img src="{% static 'img/signin-with-microsoft-dark.svg' %}">
                     </div>
                 {% endif %}
             </div>

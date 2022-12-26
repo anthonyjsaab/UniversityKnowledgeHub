@@ -10,6 +10,7 @@ types = [('Chapter', 'Chapter'), ('Code', 'Code'), ('Drop Quiz', 'Drop Quiz'), (
          ('Problems', 'Problems'), ('Project', 'Project'), ('Questions', 'Questions'), ('Report', 'Report'),
          ('Syllabus', 'Syllabus'), ('Tutorial', 'Tutorial'), ('Useful File', 'Useful File')]
 
+
 class PrivateMediaStorage(S3Boto3Storage):
     location = 'private'
     default_acl = 'private'
@@ -40,5 +41,6 @@ class Previous(models.Model):
     file = models.FileField()
     timestamp = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=100, choices=types)
-    semester = models.CharField(max_length=10)
-    academic_year = models.CharField(max_length=9)
+    semester = models.CharField(max_length=10, choices=[('Fall', 'Fall'), ('Spring', 'Spring'), ('Summer', 'Summer'),
+                                                        ('Winter', 'Winter')])
+    academic_year = models.IntegerField()
