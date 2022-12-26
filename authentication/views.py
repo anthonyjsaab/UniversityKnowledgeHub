@@ -139,6 +139,6 @@ def sso_login(request):
     :return:
     """
     return HttpResponseRedirect(
-        f'https://login.microsoftonline.com/common/oauth2/authorize?client_id={AD_CLIENT_ID}'
+        f'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id={AD_CLIENT_ID}'
         '&response_type=code&response_mode=query&scope=openid%20profile%20email%20offline_access%20User.Read&prompt'
         '=select_account')
