@@ -22,13 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4ehfh@nmix6zhuj$k4735el3h+vvzjy69w7&5d)xclzv7ws35&'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get("DEBUG", True)))
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "").split('||')
 
 # Application definition
 
@@ -157,6 +157,12 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 PRIVATE_MEDIA_LOCATION = 'private'
 PRIVATE_FILE_STORAGE = 'hello_django.storage_backends.PrivateMediaStorage'
+
+CORS_ALLOW_ALL_ORIGINS = bool(int(os.environ.get('CORS_ALLOW_ALL_ORIGINS', False)))
+if os.environ.get('CORS_ALLOWED_ORIGINS', False):
+    CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS').split('||')
+if os.environ.get('CSRF_TRUSTED_ORIGINS', False):
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split('||')
 
 # The line below is cursed: it overwrites many vars in this settings.py file
 # I spent a day trying to find out why changing STATIC_URL was not being reflected
