@@ -9,7 +9,7 @@ from django.views.generic import CreateView
 from authentication.models import MyUser
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
-from uni_data.models import Previous
+from uni_data.models import Previous, Course
 
 
 @method_decorator(login_required(login_url='sso_login'), name='dispatch')
@@ -18,7 +18,9 @@ class CreatePreviousView(CreateView, SuccessMessageMixin):
     form_class = CreatePreviousForm
     success_message = "Transaction created successfully"
     template_name = "for.html"
-    success_url = reverse_lazy('home')
+
+    def get_success_url(self):
+        return reverse_lazy('home')
 
     def form_valid(self, form):
         s3_object_name = str(uuid.uuid4())
@@ -26,6 +28,9 @@ class CreatePreviousView(CreateView, SuccessMessageMixin):
         form.instance.submitter = self.request.user
         u = self.request.user
         u.previouses_count += 1
+        c = form.instance.course
+        c.previouses_count += 1
+        c.save()
         u.save()
         return super().form_valid(form)
 
@@ -45,8 +50,12 @@ def download_previous(request):
 def home(request):
     latest_prevs = list(Previous.objects.order_by('id'))
     if len(latest_prevs) > 5:
-        latest_prevs = latest_prevs[-5:][::-1]
+        latest_prevs = latest_prevs[-5:]
+    latest_prevs = latest_prevs[::-1]
     best_users = list(MyUser.objects.order_by('-previouses_count'))
     if len(best_users) > 5:
-        best_users = best_users[-5:]
-    return render(request, 'uni_data/dashboard.html', {'latest_prevs': latest_prevs, 'best_users': best_users})
+        best_users = best_users[:5]
+    best_courses = list(Course.objects.order_by('-previouses_count'))
+    if len(best_courses) > 5:
+        best_courses = best_courses[:5]
+    return render(request, 'uni_data/dashboard.html', {'latest_prevs': latest_prevs, 'best_users': best_users, 'best_courses': best_courses})
