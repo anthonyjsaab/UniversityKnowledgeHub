@@ -81,7 +81,8 @@ def validate_login(request):
         # Here we are pairing the Django session created by login() with the session_state from Microsoft
         # in a custom SSOut object. This object is used later for Single Sign OUT
         session = Session.objects.get(session_key=request.session.session_key)
-        SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
+        if session_state:
+            SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
         return redirect('home')
     except ValidationError:
         # User's info is not compliant, cleanup and abort
@@ -103,9 +104,12 @@ def log_me_out(request):
     :return:
     """
     logout(request)
-    return redirect(  # Also need to log out from the Microsoft Identity platform
-        "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
-        f"?post_logout_redirect_uri={request.get_host()}{reverse_lazy('home')}")
+    host = request.get_host()
+    if "localhost:" not in host and "127.0.0.1:" not in host:
+        return redirect(  # Also need to log out from the Microsoft Identity platform
+            "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
+            f"?post_logout_redirect_uri=https://{host}{reverse_lazy('home')}")
+    return redirect('home')
 
 
 def sso_logout(request):
@@ -136,4 +140,5 @@ def sso_login(request):
     """
     return HttpResponseRedirect(
         f'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id={AD_CLIENT_ID}'
-        '&response_type=code&response_mode=query&scope=openid%20profile%20email%20offline_access%20User.Read')
+        '&response_type=code&response_mode=query&scope=openid%20profile%20email%20offline_access%20User.Read',
+        status=301)
