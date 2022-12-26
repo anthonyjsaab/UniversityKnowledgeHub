@@ -66,7 +66,7 @@ def validate_login(request):
         response = requests.get('https://graph.microsoft.com/oidc/userinfo',
                                 headers={'Authorization': f'Bearer {j.get("access_token")}'})
         if str(response.status_code) != '200':
-            return Response("Something went wrong", status=500)
+            return HttpResponse("Something went wrong", status=500)
         j = json.loads(response.content)
         # Below, we get the true, valid email of the user trying to login from a trusted source: Microsoft
         first_name, last_name, email = j.get('given_name'), j.get('family_name'), j.get('email')
@@ -86,7 +86,7 @@ def validate_login(request):
     except ValidationError:
         # User's info is not compliant, cleanup and abort
         logout(request)
-        return Response("Failed", status=400)
+        return HttpResponse("Failed", status=400)
 
 
 def test(request):
@@ -105,7 +105,7 @@ def log_me_out(request):
     logout(request)
     return redirect(  # Also need to log out from the Microsoft Identity platform
         "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
-        f"?post_logout_redirect_uri={reverse_lazy('home')}")
+        f"?post_logout_redirect_uri={request.get_host()}{reverse_lazy('home')}")
 
 
 def sso_logout(request):
