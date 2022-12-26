@@ -103,7 +103,9 @@ def log_me_out(request):
     :return:
     """
     logout(request)
-    return redirect('home')
+    return redirect(  # Also need to log out from the Microsoft Identity platform
+        "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
+        f"?post_logout_redirect_uri={reverse_lazy('home')}")
 
 
 def sso_logout(request):

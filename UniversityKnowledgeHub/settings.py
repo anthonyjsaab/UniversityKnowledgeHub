@@ -143,8 +143,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AUTH_USER_MODEL = 'authentication.MyUser'
 
-ALLOWED_USER_FQDNS = ['mail.aub.edu', 'cs50x.anthonyjsaab.com']
-RESTRICT_FQDN = True
+ALLOWED_USER_FQDNS = os.environ.get("ALLOWED_USER_FQDNS").split('||')
+RESTRICT_FQDN = bool(int(os.environ.get("RESTRICT_FQDN")))
 AD_CLIENT_ID = os.environ.get("AD_CLIENT_ID")
 AD_CLIENT_SECRET = os.environ.get("AD_CLIENT_SECRET")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
