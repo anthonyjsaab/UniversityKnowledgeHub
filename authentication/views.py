@@ -140,5 +140,5 @@ def sso_login(request):
     """
     return HttpResponseRedirect(
         f'https://login.microsoftonline.com/common/oauth2/authorize?client_id={AD_CLIENT_ID}'
-        '&response_type=code&response_mode=query&scope=openid%20profile%20email%20offline_access%20User.Read',
-        status=301)
+        '&response_type=code&response_mode=query&scope=openid%20profile%20email%20offline_access%20User.Read&prompt'
+        '=select_account')
