@@ -9,22 +9,22 @@ from django.views.generic import CreateView
 from authentication.models import MyUser
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
-from uni_data.models import Previous, Course, types
+from uni_data.models import Previous, Course, types, Counter4User, Counter4Course
 
 
 @method_decorator(login_required(login_url='sso_login'), name='dispatch')
-class CreatePreviousView(CreateView, SuccessMessageMixin):
+class CreatePreviousView(SuccessMessageMixin, CreateView):
     model = Previous
     form_class = CreatePreviousForm
-    success_message = "Transaction created successfully"
+    success_message = "Previous uploaded and stored successfully"
     template_name = "for.html"
 
     def get_success_url(self):
         u = self.request.user
-        u.previouses_count += 1
-        self.c.previouses_count += 1
-        self.c.save()
-        u.save()
+        c1, c2 = u.prev_counter, self.c.prev_counter
+        c1.prev_count += 1
+        c2.prev_count += 1
+        c1.save(), c2.save()
         return reverse_lazy('home')
 
     def form_valid(self, form):
@@ -72,10 +72,10 @@ def home(request):
     if len(latest_prevs) > 5:
         latest_prevs = latest_prevs[-5:]
     latest_prevs = latest_prevs[::-1]
-    best_users = list(MyUser.objects.order_by('-previouses_count'))
+    best_users = [counter.user for counter in Counter4User.objects.order_by("-prev_count")]
     if len(best_users) > 5:
         best_users = best_users[:5]
-    best_courses = list(Course.objects.order_by('-previouses_count'))
+    best_courses = [counter.course for counter in Counter4Course.objects.order_by("-prev_count")]
     if len(best_courses) > 5:
         best_courses = best_courses[:5]
     return render(request, 'uni_data/dashboard.html',

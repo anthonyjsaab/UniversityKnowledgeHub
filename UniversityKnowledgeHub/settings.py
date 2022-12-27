@@ -12,11 +12,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 import django_heroku
-
+from django.contrib import messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -75,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'UniversityKnowledgeHub.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -88,15 +86,14 @@ WSGI_APPLICATION = 'UniversityKnowledgeHub.wsgi.application'
 
 DATABASES = {
     'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': str(os.environ.get('RDS_DB_NAME')),
-       'USER': str(os.environ.get('RDS_DB_USER')),
-       'PASSWORD': str(os.environ.get('RDS_DB_PASSWORD')),
-       'HOST': str(os.environ.get('RDS_DB_HOST')),
-       'PORT': int(os.environ.get('RDS_DB_PORT')),
-   }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': str(os.environ.get('RDS_DB_NAME')),
+        'USER': str(os.environ.get('RDS_DB_USER')),
+        'PASSWORD': str(os.environ.get('RDS_DB_PASSWORD')),
+        'HOST': str(os.environ.get('RDS_DB_HOST')),
+        'PORT': int(os.environ.get('RDS_DB_PORT')),
+    }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -116,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -127,7 +123,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -163,6 +158,14 @@ if os.environ.get('CORS_ALLOWED_ORIGINS', False):
     CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS').split('||')
 if os.environ.get('CSRF_TRUSTED_ORIGINS', False):
     CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split('||')
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
 
 # The line below is cursed: it overwrites many vars in this settings.py file
 # I spent a day trying to find out why changing STATIC_URL was not being reflected

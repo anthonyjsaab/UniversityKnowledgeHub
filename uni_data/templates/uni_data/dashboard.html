@@ -1,113 +1,123 @@
 {% extends 'base.html' %}
 {% block main_content %}
-{% load static %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-        {% if user.is_authenticated %}
-        Welcome, {{ user.first_name }} {{ user.last_name }}!
-        {% else %}
-        Welcome, stranger!
-        {% endif %}
-    </h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.href='{% url 'upload' %}';">
-                Upload a previous
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary"
-                onclick="location.href='{% url 'search_page' %}';">
-                Search previouses
-            </button>
+    {% load static %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            {% if user.is_authenticated %}
+                Welcome, {{ user.first_name }} {{ user.last_name }}!
+            {% else %}
+                Welcome, stranger!
+            {% endif %}
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onclick="location.href='{% url 'upload' %}';">
+                    Upload a previous
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        onclick="location.href='{% url 'search_page' %}';">
+                    Search previouses
+                </button>
+            </div>
         </div>
     </div>
-</div>
-<div class="row align-items-md-stretch">
-    <div class="col-md-6">
-        <div class="h-100 p-4 bg-light border rounded-3">
-            <div class="d-flex justify-content-between flex-wrap align-items-center border-bottom">
-                <h1 class="h2">Popular Courses</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group mr-2">
-                        <button class="btn btn-sm btn-outline-secondary">See all courses</button>
+    <div class="row align-items-md-stretch">
+        <div class="col-md-6">
+            <div class="h-100 p-4 bg-light border rounded-3">
+                <div class="d-flex justify-content-between flex-wrap align-items-center border-bottom">
+                    <h1 class="h2">Popular Courses</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group mr-2">
+                            <button class="btn btn-sm btn-outline-secondary">See all courses</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <table class="table table-striped table-sm">
-                <thead>
+                <table class="table table-striped table-sm">
+                    <thead>
                     <tr>
                         <th>#</th>
                         <th>Title</th>
                         <th>Previouses count</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% for c in best_courses %}
-                    <tr>
-                        <td>{{ c.letter_code }}{{ c.number }}</td>
-                        <td>{{ c.title }}</td>
-                        <td>{{ c.previouses_count }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ c.letter_code }}{{ c.number }}</td>
+                            <td>{{ c.title }}</td>
+                            <td>{{ c.previouses_count }}</td>
+                        </tr>
                     {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="h-100 p-4 bg-light border rounded-3">
-            <div class="d-flex justify-content-between flex-wrap align-items-center border-bottom">
-                <h1 class="h2">Latest Previouses Submitted</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="btn-group mr-2">
-                        <button class="btn btn-sm btn-outline-secondary">See all courses</button>
+        <div class="col-md-6">
+            <div class="h-100 p-4 bg-light border rounded-3">
+                <div class="d-flex justify-content-between flex-wrap align-items-center border-bottom">
+                    <h1 class="h2">Latest Previouses Submitted</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group mr-2">
+                            <button class="btn btn-sm btn-outline-secondary">See all courses</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <table class="table table-striped table-sm">
-                <tbody>
+                <table class="table table-striped table-sm">
+                    <tbody>
                     <thead>
-                        <tr>
-                            <th>Course</th>
-                            <th>Type</th>
-                            <th>Semester</th>
-                            <th>Date</th>
-                        </tr>
+                    <tr>
+                        <th>Course</th>
+                        <th>Type</th>
+                        <th>Semester</th>
+                        <th>Download link</th>
+                    </tr>
                     </thead>
                     {% if latest_prevs %}
-                    {% for prev in latest_prevs %}
-                    <tr>
-                        <td>{{ prev.course.letter_code }} {{ prev.course.number }}</td>
-                        <td>{{ prev.type }}</td>
-                        <td>{{ prev.semester }} - {{ prev.academic_year }}</td>
-                        <td>{{ prev.timestamp.date }}</td>
-                    </tr>
-                    {% endfor %}
+                        {% for prev in latest_prevs %}
+                            <tr>
+                                <td>{{ prev.course.letter_code }} {{ prev.course.number }}</td>
+                                <td>{{ prev.type }}</td>
+                                <td>{{ prev.semester }} - {{ prev.academic_year }}</td>
+                                <td>
+                                    <span
+                                            onclick="location.href='{% url 'download' %}?id={{ prev.id }}';">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                             fill="currentColor" class="bi bi-cloud-download-fill" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"/>
+                                        </svg>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     {% endif %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-<div class="bg-light border rounded-3 mt-3">
-    <div class="table-responsive m-3">
-        <h1 class="h2 pb-2 m-3">Best Users</h1>
-        <table class="table table-striped table-sm">
-            <thead>
+    <div class="bg-light border rounded-3 mt-3">
+        <div class="table-responsive m-3">
+            <h1 class="h2 pb-2 m-3">Best Users</h1>
+            <table class="table table-striped table-sm">
+                <thead>
                 <tr>
                     <th>Username</th>
                     <th>Member since</th>
                     <th>Number of previouses submitted</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {% for u in best_users %}
-                <tr>
-                    <td>{{ u.username }}</td>
-                    <td>{{ u.date_joined.date }}</td>
-                    <td>{{ u.previouses_count }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ u.username }}</td>
+                        <td>{{ u.date_joined.date }}</td>
+                        <td>{{ u.previouses_count }}</td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}
