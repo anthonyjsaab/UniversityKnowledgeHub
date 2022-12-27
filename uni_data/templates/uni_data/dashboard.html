@@ -46,7 +46,7 @@
                         <tr>
                             <td>{{ c.letter_code }}{{ c.number }}</td>
                             <td>{{ c.title }}</td>
-                            <td>{{ c.previouses_count }}</td>
+                            <td>{{ c.counter4course.prev_count }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -113,7 +113,7 @@
                     <tr>
                         <td>{{ u.username }}</td>
                         <td>{{ u.date_joined.date }}</td>
-                        <td>{{ u.previouses_count }}</td>
+                        <td>{{ u.counter4user.prev_count }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

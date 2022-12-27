@@ -72,22 +72,22 @@ def validate_login(request):
         first_name, last_name, email = j.get('given_name'), j.get('family_name'), j.get('email')
         user = MyUser(email=email, username=str(uuid.uuid4()), first_name=first_name, last_name=last_name)
         user.set_unusable_password()
-    try:
-        # Below raises exception if one of the validators are not happy
-        user.full_clean()
-        # If user's info compliant, new object is saved and visitor is logged in
-        user.save()
-        login(request, user)
-        # Here we are pairing the Django session created by login() with the session_state from Microsoft
-        # in a custom SSOut object. This object is used later for Single Sign OUT
-        session = Session.objects.get(session_key=request.session.session_key)
-        if session_state:
-            SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
-        return redirect('home')
-    except ValidationError:
-        # User's info is not compliant, cleanup and abort
-        logout(request)
-        return HttpResponse("Failed", status=400)
+        try:
+            # Below raises exception if one of the validators are not happy
+            user.full_clean()
+            # If user's info compliant, new object is saved and visitor is logged in
+            user.save()
+        except ValidationError:
+            # User's info is not compliant, cleanup and abort
+            logout(request)
+            return HttpResponse("Failed", status=400)
+    login(request, user)
+    # Here we are pairing the Django session created by login() with the session_state from Microsoft
+    # in a custom SSOut object. This object is used later for Single Sign OUT
+    session = Session.objects.get(session_key=request.session.session_key)
+    if session_state:
+        SSOut.objects.create(microsoft_sessionid=session_state, django_session=session, user=request.user)
+    return redirect('home')
 
 
 def test(request):

@@ -59,9 +59,10 @@ class Counter4User(models.Model):
 
 @receiver(post_save, sender=MyUser)
 def create_counter4user(sender, instance, **kwargs):
-    Counter4User.objects.create(user=instance)
+    if kwargs.get('created'):
+        Counter4User.objects.create(user=instance)
 
 
 @receiver(post_save, sender=Course)
-def create_counter4user(sender, instance, **kwargs):
+def create_counter4course(sender, instance, **kwargs):
     Counter4Course.objects.create(course=instance)

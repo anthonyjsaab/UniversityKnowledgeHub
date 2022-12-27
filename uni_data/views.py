@@ -21,7 +21,7 @@ class CreatePreviousView(SuccessMessageMixin, CreateView):
 
     def get_success_url(self):
         u = self.request.user
-        c1, c2 = u.prev_counter, self.c.prev_counter
+        c1, c2 = u.counter4user, self.c.counter4course
         c1.prev_count += 1
         c2.prev_count += 1
         c1.save(), c2.save()
@@ -72,11 +72,13 @@ def home(request):
     if len(latest_prevs) > 5:
         latest_prevs = latest_prevs[-5:]
     latest_prevs = latest_prevs[::-1]
-    best_users = [counter.user for counter in Counter4User.objects.order_by("-prev_count")]
-    if len(best_users) > 5:
-        best_users = best_users[:5]
-    best_courses = [counter.course for counter in Counter4Course.objects.order_by("-prev_count")]
-    if len(best_courses) > 5:
-        best_courses = best_courses[:5]
+    best_user_counters = Counter4User.objects.order_by("-prev_count")
+    if len(best_user_counters) > 5:
+        best_user_counters = best_user_counters[:5]
+    best_users = [counter.user for counter in best_user_counters]
+    best_course_counters = Counter4Course.objects.order_by("-prev_count")
+    if len(best_course_counters) > 5:
+        best_course_counters = best_course_counters[:5]
+    best_courses = [counter.course for counter in best_course_counters]
     return render(request, 'uni_data/dashboard.html',
                   {'latest_prevs': latest_prevs, 'best_users': best_users, 'best_courses': best_courses})
