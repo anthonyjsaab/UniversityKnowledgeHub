@@ -1,15 +1,54 @@
 import uuid
-from django.contrib.auth.decorators import login_required
+from functools import wraps
+from urllib.parse import urlparse
+
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView
+
+from UniversityKnowledgeHub import settings
 from authentication.models import MyUser
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
 from uni_data.models import Previous, Course, types, Counter4User, Counter4Course
+
+
+def request_passes_test(
+        test_func, login_url=None, redirect_field_name=REDIRECT_FIELD_NAME
+):
+    """
+    Decorator for views that checks that the user passes the given test,
+    redirecting to the log-in page if necessary. The test should be a callable
+    that takes the user object and returns True if the user passes.
+    """
+
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if test_func(request):
+                return view_func(request, *args, **kwargs)
+            path = request.build_absolute_uri()
+            resolved_login_url = resolve_url(login_url or settings.LOGIN_URL)
+            # If the login url is the same scheme and net location then just
+            # use the path as the "next" url.
+            login_scheme, login_netloc = urlparse(resolved_login_url)[:2]
+            current_scheme, current_netloc = urlparse(path)[:2]
+            if (not login_scheme or login_scheme == current_scheme) and (
+                    not login_netloc or login_netloc == current_netloc
+            ):
+                path = request.get_full_path()
+            from django.contrib.auth.views import redirect_to_login
+
+            return redirect_to_login(path, resolved_login_url, redirect_field_name)
+
+        return _wrapped_view
+
+    return decorator
 
 
 @method_decorator(login_required(login_url='sso_login'), name='dispatch')
@@ -82,3 +121,12 @@ def home(request):
     best_courses = [counter.course for counter in best_course_counters]
     return render(request, 'uni_data/dashboard.html',
                   {'latest_prevs': latest_prevs, 'best_users': best_users, 'best_courses': best_courses})
+
+
+@login_required
+@request_passes_test(
+    lambda request: request.GET.get("id", False) and Previous.objects.filter(id=request.GET.get("id")) and
+                    Previous.objects.filter(id=request.GET.get("id"))[0].submitter.id == request.user.id)
+def delete_previous(request):
+    Previous.objects.filter(id=request.GET.get("id"))[0].delete()
+    return redirect('home')
