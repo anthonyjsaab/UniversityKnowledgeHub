@@ -8,7 +8,7 @@ from uni_data.models import Previous
 class CreatePreviousForm(ModelForm):
     class Meta:
         model = Previous
-        fields = ['course', 'type', 'file', 'semester', 'academic_year']
+        fields = ['file', 'course', 'type', 'semester', 'academic_year']
         widgets = {
             'course': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),
             'type': forms.Select(attrs={'class': 'form-control', 'placeholder': ' '}),

@@ -11,8 +11,8 @@ class MyUser(AbstractUser):
     email = models.EmailField(
         # Helpful when we want to restrict FQDNs
         validators=[FQDNValidator],
-        unique=True)
-    username = models.CharField(max_length=50, null=False, unique=True, default=str(uuid.uuid4()))
+        unique=True, db_index=True)
+    username = models.CharField(max_length=50, null=False, unique=True, default=str(uuid.uuid4()), db_index=True)
     REQUIRED_FIELDS = ['username']
     USERNAME_FIELD = 'email'
 

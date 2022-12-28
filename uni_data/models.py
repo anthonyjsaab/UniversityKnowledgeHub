@@ -45,6 +45,7 @@ class Previous(models.Model):
     semester = models.CharField(max_length=10, choices=[('Fall', 'Fall'), ('Spring', 'Spring'), ('Summer', 'Summer'),
                                                         ('Winter', 'Winter')])
     academic_year = models.IntegerField()
+    slug = models.SlugField(max_length=36, unique=True, blank=True, null=False, default=str(uuid.uuid4()))
 
 
 class Counter4Course(models.Model):

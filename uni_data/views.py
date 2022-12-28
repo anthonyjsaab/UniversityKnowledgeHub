@@ -1,51 +1,17 @@
 import uuid
-from functools import wraps
-from urllib.parse import urlparse
-from django.contrib.auth import REDIRECT_FIELD_NAME
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages import SUCCESS
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, redirect, resolve_url
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView
-from UniversityKnowledgeHub import settings
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
 from uni_data.models import Previous, types, Counter4User, Counter4Course
-
-
-def request_passes_test(
-        test_func, login_url=None, redirect_field_name=REDIRECT_FIELD_NAME
-):
-    """
-    Decorator for views that checks that the user passes the given test,
-    redirecting to the log-in page if necessary. The test should be a callable
-    that takes the user object and returns True if the user passes.
-    """
-
-    def decorator(view_func):
-        @wraps(view_func)
-        def _wrapped_view(request, *args, **kwargs):
-            if test_func(request):
-                return view_func(request, *args, **kwargs)
-            path = request.build_absolute_uri()
-            resolved_login_url = resolve_url(login_url or settings.LOGIN_URL)
-            # If the login url is the same scheme and net location then just
-            # use the path as the "next" url.
-            login_scheme, login_netloc = urlparse(resolved_login_url)[:2]
-            current_scheme, current_netloc = urlparse(path)[:2]
-            if (not login_scheme or login_scheme == current_scheme) and (
-                    not login_netloc or login_netloc == current_netloc
-            ):
-                path = request.get_full_path()
-            from django.contrib.auth.views import redirect_to_login
-
-            return redirect_to_login(path, resolved_login_url, redirect_field_name)
-
-        return _wrapped_view
-
-    return decorator
 
 
 @method_decorator(login_required(), name='dispatch')
@@ -74,8 +40,8 @@ class CreatePreviousView(SuccessMessageMixin, CreateView):
 
 @login_required
 def download_previous(request):
-    if request.GET.get("id", False):
-        to_download = Previous.objects.filter(id=request.GET.get("id"))
+    if request.GET.get("slug", False):
+        to_download = Previous.objects.filter(slug=request.GET.get("slug"))
         if to_download:
             return HttpResponseRedirect(s3_generate_down_url(to_download[0].file.name, 8))
         else:
@@ -91,9 +57,11 @@ def search_page(request):
         context["search_result"] = True
         context["search_params"] = request.POST
         search_kwargs = {}
-        if request.POST.get('course', False):
-            search_kwargs["course__letter_code"] = request.POST.get('course')[:4]
-            search_kwargs["course__number"] = request.POST.get('course')[4:]
+        if not request.POST.get('course', False):
+            messages.add_message(request, messages.ERROR, "A course must be selected")
+            return redirect('search_page')
+        search_kwargs["course__letter_code"] = str(request.POST.get('course')[:4]).upper()
+        search_kwargs["course__number"] = str(request.POST.get('course')[4:]).upper()
         search_kwargs['semester'] = request.POST.get('semester', None)
         search_kwargs['academic_year'] = request.POST.get('year', None)
         search_kwargs['type'] = request.POST.get('type', None)
@@ -121,14 +89,22 @@ def home(request):
 
 
 @login_required
-@request_passes_test(
-    lambda request: request.GET.get("id", False) and Previous.objects.filter(id=request.GET.get("id")) and
-                    Previous.objects.filter(id=request.GET.get("id"))[0].submitter.id == request.user.id)
 def delete_previous(request):
-    to_delete = Previous.objects.filter(id=request.GET.get("id"))[0]
+    if not request.GET.get("slug", False):
+        # Bad request
+        pass
+    to_delete = Previous.objects.filter(slug=request.GET.get("slug"))
+    if not to_delete:
+        # User trying to delete a non-existent previous
+        pass
+    to_delete = to_delete[0]
+    if not to_delete.submitter.id == request.user.id:
+        # Forbidden, User trying to delete another user's previous
+        pass
     course_counter_to_diminish, user_counter_to_diminish = to_delete.course.counter4course, request.user.counter4user
     to_delete.delete()
     course_counter_to_diminish.prev_count -= 1
     user_counter_to_diminish.prev_count -= 1
     course_counter_to_diminish.save(), user_counter_to_diminish.save()
+    messages.add_message(request, SUCCESS, "Previous deleted successfully")
     return redirect('home')
