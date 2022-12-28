@@ -90,21 +90,28 @@ def home(request):
 
 @login_required
 def delete_previous(request):
+    current_path_of_user = request.POST.get("current_path", "/")
     if not request.GET.get("slug", False):
         # Bad request
-        pass
+        messages.add_message(request, messages.ERROR,
+                             "HTTP400: Bad request, cannot delete the previous because its slug was not sent")
+        return HttpResponseRedirect(current_path_of_user)
     to_delete = Previous.objects.filter(slug=request.GET.get("slug"))
     if not to_delete:
         # User trying to delete a non-existent previous
-        pass
+        messages.add_message(request, messages.ERROR,
+                             "Cannot delete the previous because it does not exist")
+        return HttpResponseRedirect(current_path_of_user)
     to_delete = to_delete[0]
     if not to_delete.submitter.id == request.user.id:
         # Forbidden, User trying to delete another user's previous
-        pass
+        messages.add_message(request, messages.ERROR,
+                             "HTTP403: Forbidden, you are not allowed to delete this previous")
+        return HttpResponseRedirect(current_path_of_user)
     course_counter_to_diminish, user_counter_to_diminish = to_delete.course.counter4course, request.user.counter4user
     to_delete.delete()
     course_counter_to_diminish.prev_count -= 1
     user_counter_to_diminish.prev_count -= 1
     course_counter_to_diminish.save(), user_counter_to_diminish.save()
     messages.add_message(request, SUCCESS, "Previous deleted successfully")
-    return redirect('home')
+    return HttpResponseRedirect(current_path_of_user)

@@ -80,22 +80,33 @@
                                 <td>{{ prev.type }}</td>
                                 <td>{{ prev.semester }} - {{ prev.academic_year }}</td>
                                 <td>
-                                    <span
-                                            onclick="location.href='{% url 'download' %}?slug={{ prev.slug }}';">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                             fill="currentColor" class="bi bi-cloud-download-fill" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd"
-                                                  d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"/>
-                                        </svg>
-                                    </span>
-                                    {% if prev.submitter.id == request.user.id %}
+                                    <form action="{% url 'download' %}?slug={{ prev.slug }}"
+                                          id="form-down-{{ prev.slug }}" method="POST" style="display:inline-block;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="current_path" value="{{ request.path }}">
                                         <span
-                                                onclick="location.href='{% url 'delete' %}?slug={{ prev.slug }}';">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                             fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                onclick="document.getElementById('form-down-{{ prev.slug }}').submit();">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-cloud-download-fill"
+                                                 viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                      d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"/>
+                                            </svg>
+                                        </span>
+                                    </form>
+                                    {% if prev.submitter.id == request.user.id %}
+                                        <form action="{% url 'delete' %}?slug={{ prev.slug }}"
+                                              id="form-del-{{ prev.slug }}" method="POST" style="display:inline-block;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="current_path" value="{{ request.path }}">
+                                            <span
+                                                    onclick="document.getElementById('form-del-{{ prev.slug }}').submit();">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                 fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
   <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
                                         </svg>
-                                    </span>
+                                        </span>
+                                        </form>
                                     {% endif %}
                                 </td>
                             </tr>
