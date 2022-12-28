@@ -24,8 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get("DEBUG", True)))
-DEBUG_PROPAGATE_EXCEPTIONS = True
+DEBUG = bool(int(os.environ.get("DEBUG", False)))
+DEBUG_PROPAGATE_EXCEPTIONS = bool(int(os.environ.get("DEBUG_PROPAGATE_EXCEPTIONS", True)))
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "").split('||')
 
@@ -76,13 +76,6 @@ WSGI_APPLICATION = 'UniversityKnowledgeHub.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-'''
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-'''
 
 DATABASES = {
     'default': {
@@ -136,6 +129,7 @@ STATIC_URL = 'https://cdn.previouses.ml/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 AUTH_USER_MODEL = 'authentication.MyUser'
 LOGIN_URL = 'sso_login'
 
@@ -147,8 +141,8 @@ AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION')
-AWS_DEFAULT_ACL = None
+AWS_S3_SIGNATURE_VERSION = os.environ.get('AWS_S3_SIGNATURE_VERSION', 's3v4')
+AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL', None)
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 PRIVATE_MEDIA_LOCATION = 'private'
