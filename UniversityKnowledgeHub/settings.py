@@ -137,6 +137,7 @@ STATIC_URL = 'https://cdn.previouses.ml/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AUTH_USER_MODEL = 'authentication.MyUser'
+LOGIN_URL = 'sso_login'
 
 ALLOWED_USER_FQDNS = os.environ.get("ALLOWED_USER_FQDNS").split('||')
 RESTRICT_FQDN = bool(int(os.environ.get("RESTRICT_FQDN")))

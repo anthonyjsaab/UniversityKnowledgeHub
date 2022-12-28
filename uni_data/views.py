@@ -1,21 +1,18 @@
 import uuid
 from functools import wraps
 from urllib.parse import urlparse
-
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView
-
 from UniversityKnowledgeHub import settings
-from authentication.models import MyUser
 from storage_conn.views import s3_generate_down_url
 from uni_data.forms import CreatePreviousForm
-from uni_data.models import Previous, Course, types, Counter4User, Counter4Course
+from uni_data.models import Previous, types, Counter4User, Counter4Course
 
 
 def request_passes_test(
@@ -51,7 +48,7 @@ def request_passes_test(
     return decorator
 
 
-@method_decorator(login_required(login_url='sso_login'), name='dispatch')
+@method_decorator(login_required(), name='dispatch')
 class CreatePreviousView(SuccessMessageMixin, CreateView):
     model = Previous
     form_class = CreatePreviousForm
@@ -128,5 +125,10 @@ def home(request):
     lambda request: request.GET.get("id", False) and Previous.objects.filter(id=request.GET.get("id")) and
                     Previous.objects.filter(id=request.GET.get("id"))[0].submitter.id == request.user.id)
 def delete_previous(request):
-    Previous.objects.filter(id=request.GET.get("id"))[0].delete()
+    to_delete = Previous.objects.filter(id=request.GET.get("id"))[0]
+    course_counter_to_diminish, user_counter_to_diminish = to_delete.course.counter4course, request.user.counter4user
+    to_delete.delete()
+    course_counter_to_diminish.prev_count -= 1
+    user_counter_to_diminish.prev_count -= 1
+    course_counter_to_diminish.save(), user_counter_to_diminish.save()
     return redirect('home')
