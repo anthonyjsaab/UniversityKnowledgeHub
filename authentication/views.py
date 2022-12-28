@@ -14,7 +14,8 @@ from UniversityKnowledgeHub.settings import AD_CLIENT_ID, AD_CLIENT_SECRET
 from authentication.models import MyUser, SSOut
 
 
-@user_passes_test(lambda user: not user.is_authenticated)  # Authenticated users don't need to give auth code
+@user_passes_test(lambda user: not user.is_authenticated,
+                  reverse_lazy('home'))  # Authenticated users don't need to give auth code
 def validate_login(request):
     """
     The user sends us the code returned by Microsoft's  API.
@@ -131,7 +132,8 @@ def sso_logout(request):
     return HttpResponse("OK")
 
 
-@user_passes_test(lambda user: not user.is_authenticated)  # Authenticated users don't need to login
+@user_passes_test(lambda user: not user.is_authenticated,
+                  reverse_lazy('home'))  # Authenticated users don't need to login
 def sso_login(request):
     """
     Steps 1 & 2 depicted in image "Auth Using Microsoft's Identity Platform.png"
