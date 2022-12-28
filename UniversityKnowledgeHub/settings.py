@@ -166,4 +166,4 @@ MESSAGE_TAGS = {
 # I spent a day trying to find out why changing STATIC_URL was not being reflected
 # It turned out this below line was responsible. So I added staticfiles=False to solve
 # the problem
-django_heroku.settings(locals(), staticfiles=bool(int(os.environ.get("HEROKU_STATIC", 1))))
+django_heroku.settings(locals(), staticfiles=bool(int(os.environ.get("HEROKU_SERVES_STATIC_FILES", 1))))
