@@ -109,7 +109,8 @@ def delete_previous(request):
                              "HTTP403: Forbidden, you are not allowed to delete this previous")
         return HttpResponseRedirect(current_path_of_user)
     course_counter_to_diminish, user_counter_to_diminish = to_delete.course.counter4course, request.user.counter4user
-    to_delete.delete()
+    to_delete.file.delete(save=False)  # Deleting the file on the S3 bucket
+    to_delete.delete()  # Deleting the DB record
     course_counter_to_diminish.prev_count -= 1
     user_counter_to_diminish.prev_count -= 1
     course_counter_to_diminish.save(), user_counter_to_diminish.save()

@@ -1,7 +1,7 @@
-from datetime import date
-
-from django.forms import ModelForm
 import django.forms as forms
+
+from datetime import date
+from django.forms import ModelForm
 from uni_data.models import Previous
 
 
