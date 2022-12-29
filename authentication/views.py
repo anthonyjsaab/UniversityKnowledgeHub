@@ -39,7 +39,7 @@ def validate_login(request):
     # Step 7
     response = requests.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', data=data)
     if str(response.status_code) != '200':
-        return HttpResponse("Something went wrong 1")
+        return HttpResponse(f"Something went wrong 1 {response.status_code}")
     # Tokens are below
     j = json.loads(response.content)
     # This id_token contains information about the Microsoft user trying to login to our website, notably their email.
@@ -67,7 +67,7 @@ def validate_login(request):
         response = requests.get('https://graph.microsoft.com/oidc/userinfo',
                                 headers={'Authorization': f'Bearer {j.get("access_token")}'})
         if str(response.status_code) != '200':
-            return HttpResponse("Something went wrong", status=500)
+            return HttpResponse(f"Something went wrong 2 {response.status_code}", status=500)
         j = json.loads(response.content)
         # Below, we get the true, valid email of the user trying to login from a trusted source: Microsoft
         first_name, last_name, email = j.get('given_name'), j.get('family_name'), j.get('email')
@@ -105,11 +105,11 @@ def log_me_out(request):
     :return:
     """
     logout(request)
-    host = request.get_host()
+    '''host = request.get_host()
     if "localhost:" not in host and "127.0.0.1:" not in host:
         return redirect(  # Also need to log out from the Microsoft Identity platform
             "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
-            f"?post_logout_redirect_uri=https://{host}{reverse_lazy('home')}")
+            f"?post_logout_redirect_uri=https://{host}{reverse_lazy('home')}")'''
     return redirect('home')
 
 
