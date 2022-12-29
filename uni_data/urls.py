@@ -8,4 +8,5 @@ urlpatterns = [
         path('delete_prev/', views.delete_previous, name='delete'),
         path('', views.home, name='home'),
         path('search/', views.search_page, name='search_page'),
+        path('profile/', views.UpdateProfileView.as_view(), name='profile'),
 ]

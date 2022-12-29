@@ -8,9 +8,11 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
+
+from authentication.models import MyUser
 from storage_conn.views import s3_generate_down_url
-from uni_data.forms import CreatePreviousForm
+from uni_data.forms import CreatePreviousForm, UpdateProfileForm
 from uni_data.models import Previous, types, Counter4User, Counter4Course
 
 
@@ -116,3 +118,13 @@ def delete_previous(request):
     course_counter_to_diminish.save(), user_counter_to_diminish.save()
     messages.add_message(request, SUCCESS, "Previous deleted successfully")
     return HttpResponseRedirect(current_path_of_user)
+
+
+class UpdateProfileView(SuccessMessageMixin, UpdateView):
+    form_class = UpdateProfileForm
+    model = MyUser
+    success_message = "Profile updated successfully"
+    template_name = "profile.html"
+
+    def get_object(self, queryset=None):
+        return self.request.user

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block main_content %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">
+            Update your profile
+        </h1>
+    </div>
+    <p>
+        <label>First Name</label>
+        <input disabled type="text" value="{{ request.user.first_name }}" class="form-control">
+    </p>
+    <p>
+        <label>Last Name</label>
+        <input disabled type="text" value="{{ request.user.last_name }}" class="form-control">
+    </p>
+    <p>
+        <label>Email:</label>
+        <input disabled type="text" value="{{ request.user.email }}" class="form-control">
+    </p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div>
+            <input type="submit" class="form-control btn btn-success">
+        </div>
+    </form>
+    </body>
+    </html>
+{% endblock %}

@@ -2,6 +2,8 @@ import django.forms as forms
 
 from datetime import date
 from django.forms import ModelForm
+
+from authentication.models import MyUser
 from uni_data.models import Previous
 
 
@@ -20,3 +22,12 @@ class CreatePreviousForm(ModelForm):
 
     def save(self, commit=True):
         super(CreatePreviousForm, self).save(commit=commit)
+
+
+class UpdateProfileForm(ModelForm):
+    class Meta:
+        model = MyUser
+        fields = ['username']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' '}),
+        }
