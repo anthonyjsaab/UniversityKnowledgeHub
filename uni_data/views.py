@@ -73,6 +73,28 @@ def search_page(request):
     return render(request, 'uni_data/search_page.html', context)
 
 
+@login_required
+def my_submissions(request):
+    context = {'types': [t[0] for t in types]}
+    if request.method == "POST":
+        context["search_params"] = request.POST
+        search_kwargs = {}
+        if not request.POST.get('course', False):
+            messages.add_message(request, messages.ERROR, "A course must be selected")
+            return redirect('search_page')
+        search_kwargs["course__letter_code"] = str(request.POST.get('course')[:4]).upper()
+        search_kwargs["course__number"] = str(request.POST.get('course')[4:]).upper()
+        search_kwargs['semester'] = request.POST.get('semester', None)
+        search_kwargs['academic_year'] = request.POST.get('year', None)
+        search_kwargs['type'] = request.POST.get('type', None)
+        search_kwargs_copy = search_kwargs.copy()
+        [search_kwargs.pop(key) for key in search_kwargs_copy if not search_kwargs_copy[key]]
+        context["results"] = Previous.objects.filter(**search_kwargs).filter(submitter=request.user)
+    else:
+        context["results"] = Previous.objects.filter(submitter=request.user)
+    return render(request, 'uni_data/my_submissions.html', context)
+
+
 def home(request):
     latest_prevs = list(Previous.objects.order_by('id'))
     if len(latest_prevs) > 5:
@@ -120,6 +142,7 @@ def delete_previous(request):
     return HttpResponseRedirect(current_path_of_user)
 
 
+@method_decorator(login_required(), name='dispatch')
 class UpdateProfileView(SuccessMessageMixin, UpdateView):
     form_class = UpdateProfileForm
     model = MyUser
