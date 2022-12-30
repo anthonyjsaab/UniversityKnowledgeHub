@@ -148,6 +148,7 @@ class UpdateProfileView(SuccessMessageMixin, UpdateView):
     model = MyUser
     success_message = "Profile updated successfully"
     template_name = "profile.html"
+    success_url = reverse_lazy('profile')
 
     def get_object(self, queryset=None):
         return self.request.user
