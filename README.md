@@ -56,6 +56,8 @@
     
 * Names and emails are not revealed to the public.
     
+* Admins can restrict which Fully-qualified domain names can be registered. For example, I can allow only people with a @mail.aub.edu email to register on my website. This setting is controlled by an environment variable.
+    
 
 ### Improvements to be made
 
@@ -64,5 +66,9 @@
 * A system for voting files up and down should be implemented
     
 * A system for voting users up and down should be implemented
+    
+* A chat system should be implemented
+    
+* A reporting system should be made available.
     
 * An easy setup process should be developed to let the different universities deploy their own instances quickly and seamlessly. For example, course names should be customized.
