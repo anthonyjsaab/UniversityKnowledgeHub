@@ -1,6 +1,6 @@
 # UniversityKnowledgeHub
 
-# Video Demo: https://youtu.be/\_HNXV63ucSk
+# Video Demo: https://youtu.be/_HNXV63ucSk
 
 ## Description:
 
