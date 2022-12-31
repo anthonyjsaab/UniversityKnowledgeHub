@@ -1,6 +1,6 @@
 # UniversityKnowledgeHub
 
-# Video Demo: https://youtu.be/_HNXV63ucSk
+# Video Demo: https://youtu.be/\_HNXV63ucSk
 
 ## Description:
 
@@ -37,7 +37,7 @@
 
 ### Deployment Details
 
-* The website has the following CNAME: cs50x.anthonyjsaab.com
+* The website has the following CNAME: cs50x.anthonyjsaab.com and previouses.ml
     
 * Django running on Heroku Dynos
     
@@ -48,7 +48,9 @@
 
 ### Security by Design
 
-* All secrets are fetched from environment variables. No secret is hardcoded.
+* All secrets are fetched from environment variables. No secret has been hardcoded.
+    
+* Credentials checked before loading any page of the website
     
 * The authentication process is outsourced to Microsoft. The website is effectively passwordless since users can only sign in using their Microsoft accounts.
     
@@ -57,6 +59,8 @@
 * Names and emails are not revealed to the public.
     
 * Admins can restrict which Fully-qualified domain names can be registered. For example, I can allow only people with a @mail.aub.edu email to register on my website. This setting is controlled by an environment variable.
+    
+* The website is protected and proxied by Cloudflare.
     
 
 ### Improvements to be made
@@ -72,3 +76,5 @@
 * A reporting system should be made available.
     
 * An easy setup process should be developed to let the different universities deploy their own instances quickly and seamlessly. For example, course names should be customized.
+    
+* UI has a large room for improvement.
