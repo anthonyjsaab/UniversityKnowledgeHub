@@ -55,3 +55,14 @@
 * The data minimization principle is followed.
     
 * Names and emails are not revealed to the public.
+    
+
+### Improvements to be made
+
+* Files should be sent to an antivirus API for checking before storing them. That way the website won't empower any watering hole attack.
+    
+* A system for voting files up and down should be implemented
+    
+* A system for voting users up and down should be implemented
+    
+* An easy setup process should be developed to let the different universities deploy their own instances quickly and seamlessly. For example, course names should be customized.
